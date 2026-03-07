@@ -1,8 +1,14 @@
 from fastapi import FastAPI
 
-app = FastAPI(title="stockVis API")
+
+def create_app() -> FastAPI:
+    app = FastAPI(title="stockVis API", version="0.1.0")
+
+    @app.get("/health")
+    def health() -> dict[str, str]:
+        return {"status": "ok"}
+
+    return app
 
 
-@app.get("/health")
-def health() -> dict[str, str]:
-    return {"status": "ok"}
+app = create_app()
