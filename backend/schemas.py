@@ -1,19 +1,34 @@
-# Purpose:
-# Define API data contracts for portfolio analysis.
-# Keep these models transport-focused (request/response only), no DB logic.
+from pydantic import BaseModel, Field
 
-# HoldingInput:
-# One user-entered position (ticker + shares).
-# Validate ticker format and enforce shares > 0.
 
-# AnalyzeRequest:
-# Payload for POST /analyze.
-# Includes a non-empty holdings list and threshold_percent in [1, 100].
+class HoldingInput(BaseModel):
+    ticker: str = Field(..., description="Stock ticker symbol, e.g., 'AAPL'.")
+    shares: int = Field(..., gt=0, description="Number of shares held, must be > 0.")
 
-# ExposureRow:
-# One output row after look-through aggregation.
-# total_percent = from_etf_percent + direct_percent.
 
-# AnalyzeResponse:
-# API response for analysis result.
-# Returns applied threshold and rows sorted by total_percent desc (service responsibility).
+class AnalyzeRequest(BaseModel):
+    holdings: list[HoldingInput] = Field(
+        ...,
+        min_length=1,
+        description="List of user holdings, must contain at least one item.",
+    )
+    threshold_percent: float = Field(
+        ...,
+        ge=1,
+        le=100,
+        description="Minimum exposure percentage to include in results, between 1 and 100.",
+    )
+
+
+class ExposureRow(BaseModel):
+    ticker: str = Field(..., description="Stock ticker symbol, e.g., 'AAPL'.")
+    from_etf_percent: float = Field(..., ge=0, description="Exposure percentage from ETFs.")
+    direct_percent: float = Field(..., ge=0, description="Direct exposure percentage.")
+    total_percent: float = Field(..., ge=0, description="Total exposure percentage (from_etf_percent + direct_percent).")
+
+class AnalyzeResponse(BaseModel):
+    threshold_percent: float = Field(..., description="The threshold percent applied in the analysis.")
+    rows: list[ExposureRow] = Field(
+        ...,
+        description="List of exposure rows meeting the threshold criteria, sorted by total_percent desc.",
+    )
