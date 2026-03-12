@@ -6,6 +6,8 @@ const holdings = ref([
   { id: 2, ticker: 'MSFT', shares: 10 },
   { id: 3, ticker: 'AAPL', shares: 4 },
 ])
+const thresholdPercent = ref(5)
+let nextHoldingId = 4
 
 const chartRows = [
   { ticker: 'MSFT', percent: 31.4 },
@@ -27,6 +29,23 @@ function barWidth(percent) {
 
 function confirmField(event) {
   event.target.blur()
+}
+
+function addRow() {
+  holdings.value.push({
+    id: nextHoldingId,
+    ticker: '',
+    shares: 0,
+  })
+  nextHoldingId += 1
+}
+
+function removeRow(holdingId) {
+  if (holdings.value.length === 1) {
+    return
+  }
+
+  holdings.value = holdings.value.filter((holding) => holding.id !== holdingId)
 }
 </script>
 
@@ -56,6 +75,7 @@ function confirmField(event) {
               class="ghost-button"
               type="button"
               title="Add another stock or ETF holding to the portfolio."
+              @click="addRow"
             >
               + Add Row
             </button>
@@ -96,6 +116,7 @@ function confirmField(event) {
               type="button"
               aria-label="Remove row"
               title="Remove this holding from the portfolio."
+              @click="removeRow(holding.id)"
             >
               <span aria-hidden="true">X</span>
             </button>
@@ -105,12 +126,12 @@ function confirmField(event) {
         <div class="card">
           <div class="card-heading">
             <h3>Display Threshold</h3>
-            <span class="value-pill">5%</span>
+            <span class="value-pill">{{ thresholdPercent }}%</span>
           </div>
 
           <label class="range-block">
             <span>Show positions at or above this percentage.</span>
-            <input type="range" min="1" max="100" value="5" />
+            <input v-model="thresholdPercent" type="range" min="1" max="100" />
           </label>
         </div>
 
