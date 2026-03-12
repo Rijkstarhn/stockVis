@@ -1,3 +1,5 @@
+from datetime import date, datetime
+
 from pydantic import BaseModel, Field
 
 
@@ -32,3 +34,21 @@ class AnalyzeResponse(BaseModel):
         ...,
         description="List of exposure rows meeting the threshold criteria, sorted by total_percent desc.",
     )
+
+
+class EtfOption(BaseModel):
+    ticker: str = Field(..., description="ETF ticker symbol.")
+    name: str = Field(..., description="Display name for UI dropdown.")
+    holdings_count: int | None = Field(default=None, description="Cached constituent count for this ETF.")
+    data_as_of_date: date | None = Field(
+        default=None,
+        description="Date the holdings snapshot represents (if known).",
+    )
+    last_refreshed_at: datetime | None = Field(
+        default=None,
+        description="When cache was last refreshed from provider.",
+    )
+
+
+class EtfOptionsResponse(BaseModel):
+    items: list[EtfOption] = Field(..., description="Supported ETF options for dropdown.")
