@@ -52,3 +52,14 @@ class EtfOption(BaseModel):
 
 class EtfOptionsResponse(BaseModel):
     items: list[EtfOption] = Field(..., description="Supported ETF options for dropdown.")
+
+
+class PriceOption(BaseModel):
+    ticker: str = Field(..., description="Ticker symbol for stock or ETF.")
+    price: float | None = Field(default=None, description="Latest cached price.")
+    price_date: date | None = Field(default=None, description="Market date for the cached price.")
+    fetched_at: datetime | None = Field(default=None, description="When the price was last fetched.")
+
+
+class PriceOptionsResponse(BaseModel):
+    items: list[PriceOption] = Field(..., description="Cached price metadata for supported tickers.")

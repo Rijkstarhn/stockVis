@@ -117,3 +117,45 @@ def test_analyze_endpoint_applies_threshold_after_etf_merge(monkeypatch) -> None
         assert body["rows"][0]["total_percent"] == 60.0
     finally:
         engine.dispose()
+
+
+def test_analyze_endpoint_returns_409_when_price_cache_missing(monkeypatch) -> None:
+    engine, testing_session_local = make_testing_session_local()
+    try:
+        monkeypatch.setattr(analyze_service, "SessionLocal", testing_session_local)
+
+        client = TestClient(app)
+        payload = {
+            "holdings": [{"ticker": "MSFT", "shares": 1}],
+            "threshold_percent": 1,
+        }
+
+        response = client.post("/analyze", json=payload)
+
+        assert response.status_code == 409
+        assert response.json() == {"detail": "Missing cached price for MSFT"}
+    finally:
+        engine.dispose()
+
+
+def test_analyze_endpoint_returns_409_when_etf_cache_missing(monkeypatch) -> None:
+    engine, testing_session_local = make_testing_session_local()
+    try:
+        with testing_session_local() as session:
+            seed_price(session, "VTI", 100.0)
+            session.commit()
+
+        monkeypatch.setattr(analyze_service, "SessionLocal", testing_session_local)
+
+        client = TestClient(app)
+        payload = {
+            "holdings": [{"ticker": "VTI", "shares": 1}],
+            "threshold_percent": 1,
+        }
+
+        response = client.post("/analyze", json=payload)
+
+        assert response.status_code == 409
+        assert response.json() == {"detail": "Missing cached ETF constituents for VTI"}
+    finally:
+        engine.dispose()
