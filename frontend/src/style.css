@@ -2,24 +2,25 @@
   font-family: "Avenir Next", "Segoe UI", sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color: #14202a;
+  color: #f4e8c6;
   background:
-    radial-gradient(circle at top left, rgba(255, 196, 110, 0.36), transparent 28%),
-    radial-gradient(circle at top right, rgba(72, 168, 153, 0.22), transparent 24%),
-    linear-gradient(180deg, #f5efe4 0%, #f0f6f3 52%, #f4f8fb 100%);
+    radial-gradient(circle at top left, rgba(194, 143, 48, 0.24), transparent 26%),
+    radial-gradient(circle at top right, rgba(255, 214, 125, 0.08), transparent 20%),
+    linear-gradient(180deg, #050505 0%, #101010 44%, #17120c 100%);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  --ink: #14202a;
-  --muted: #62717d;
-  --panel: rgba(255, 255, 255, 0.72);
-  --panel-strong: rgba(255, 255, 255, 0.88);
-  --border: rgba(20, 32, 42, 0.1);
-  --accent: #0f8b7a;
-  --accent-dark: #0b6a5d;
-  --gold: #d99a3d;
-  --shadow: 0 24px 70px rgba(44, 58, 71, 0.12);
+  --ink: #f6ebcf;
+  --muted: #b9a884;
+  --panel: rgba(20, 16, 11, 0.86);
+  --panel-strong: rgba(28, 22, 15, 0.94);
+  --border: rgba(219, 173, 82, 0.16);
+  --accent: #d7aa4a;
+  --accent-dark: #f0d28f;
+  --gold: #d7aa4a;
+  --gold-soft: #f5d48c;
+  --shadow: 0 26px 80px rgba(0, 0, 0, 0.42);
 }
 
 * {
@@ -35,6 +36,11 @@ body {
 button,
 input {
   font: inherit;
+}
+
+input:focus,
+button:focus {
+  outline: none;
 }
 
 button {
@@ -76,6 +82,8 @@ button {
   font-size: clamp(2.5rem, 5vw, 4.6rem);
   line-height: 0.95;
   letter-spacing: -0.05em;
+  color: #fff3d0;
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 
 .hero-copy {
@@ -123,8 +131,8 @@ button {
 .value-pill,
 .meta-chip {
   border-radius: 999px;
-  border: 1px solid rgba(15, 139, 122, 0.14);
-  background: rgba(15, 139, 122, 0.08);
+  border: 1px solid rgba(219, 173, 82, 0.22);
+  background: rgba(215, 170, 74, 0.09);
   padding: 7px 12px;
   font-size: 0.82rem;
   color: var(--accent-dark);
@@ -140,9 +148,10 @@ button {
 
 .card {
   background: var(--panel-strong);
-  border: 1px solid rgba(20, 32, 42, 0.08);
+  border: 1px solid rgba(219, 173, 82, 0.08);
   border-radius: 22px;
   padding: 18px;
+  box-shadow: inset 0 1px 0 rgba(255, 222, 153, 0.03);
 }
 
 .card-heading {
@@ -163,18 +172,24 @@ button {
 }
 
 .ghost-button {
-  background: rgba(20, 32, 42, 0.06);
-  color: var(--ink);
+  background: rgba(215, 170, 74, 0.1);
+  color: var(--accent-dark);
   padding: 10px 14px;
   border-radius: 12px;
 }
 
 .icon-button {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
   border-radius: 12px;
-  background: rgba(20, 32, 42, 0.06);
-  color: var(--muted);
+  background: linear-gradient(180deg, rgba(255, 240, 198, 0.06), rgba(215, 170, 74, 0.08));
+  border: 1px solid rgba(215, 170, 74, 0.14);
+  color: var(--gold-soft);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  box-shadow: inset 0 1px 0 rgba(255, 244, 212, 0.08);
 }
 
 .primary-button,
@@ -186,15 +201,15 @@ button {
 }
 
 .primary-button {
-  background: linear-gradient(135deg, var(--accent) 0%, #109f88 100%);
-  color: #f7fffc;
-  box-shadow: 0 16px 34px rgba(15, 139, 122, 0.28);
+  background: linear-gradient(135deg, #c48c27 0%, #f2cf7a 100%);
+  color: #17120c;
+  box-shadow: 0 16px 34px rgba(196, 140, 39, 0.34);
 }
 
 .secondary-button {
-  background: #fff;
+  background: rgba(255, 242, 210, 0.04);
   color: var(--ink);
-  border: 1px solid rgba(20, 32, 42, 0.1);
+  border: 1px solid rgba(219, 173, 82, 0.16);
 }
 
 .ghost-button:hover,
@@ -223,11 +238,33 @@ button {
 
 .field input {
   width: 100%;
-  border: 1px solid rgba(20, 32, 42, 0.1);
+  border: 1px solid rgba(219, 173, 82, 0.12);
   border-radius: 14px;
-  background: #fff;
+  background: rgba(6, 6, 6, 0.48);
   padding: 12px 14px;
   color: var(--ink);
+}
+
+.field input::placeholder {
+  color: rgba(245, 212, 140, 0.5);
+}
+
+.field input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.field input[type="number"]::-webkit-outer-spin-button,
+.field input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.field input:focus-visible {
+  border-color: rgba(245, 212, 140, 0.65);
+  box-shadow:
+    0 0 0 2px rgba(14, 10, 6, 0.95),
+    0 0 0 4px rgba(215, 170, 74, 0.52),
+    0 0 22px rgba(215, 170, 74, 0.18);
 }
 
 .range-block {
@@ -239,6 +276,15 @@ button {
 .range-block input[type="range"] {
   width: 100%;
   accent-color: var(--gold);
+}
+
+.ghost-button:focus-visible,
+.icon-button:focus-visible,
+.secondary-button:focus-visible,
+.primary-button:focus-visible {
+  box-shadow:
+    0 0 0 2px rgba(14, 10, 6, 0.95),
+    0 0 0 4px rgba(215, 170, 74, 0.42);
 }
 
 .chart-list {
@@ -259,14 +305,15 @@ button {
 .bar-track {
   height: 16px;
   border-radius: 999px;
-  background: rgba(20, 32, 42, 0.08);
+  background: rgba(255, 232, 179, 0.08);
   overflow: hidden;
 }
 
 .bar-fill {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--gold) 0%, #f0bf67 35%, var(--accent) 100%);
+  background: linear-gradient(90deg, #8d651d 0%, var(--gold) 22%, var(--gold-soft) 64%, #fff0c5 100%);
+  box-shadow: 0 0 20px rgba(215, 170, 74, 0.28);
 }
 
 .table-wrap {
@@ -282,7 +329,7 @@ table {
 th,
 td {
   padding: 13px 8px;
-  border-bottom: 1px solid rgba(20, 32, 42, 0.08);
+  border-bottom: 1px solid rgba(219, 173, 82, 0.08);
   text-align: left;
 }
 
@@ -295,6 +342,10 @@ thead th {
 
 tbody tr:last-child td {
   border-bottom: none;
+}
+
+tbody tr:hover td {
+  background: rgba(215, 170, 74, 0.04);
 }
 
 .sr-only {

@@ -1,9 +1,11 @@
 <script setup>
-const holdings = [
-  { ticker: 'VTI', shares: 3 },
-  { ticker: 'MSFT', shares: 10 },
-  { ticker: 'AAPL', shares: 4 },
-]
+import { ref } from 'vue'
+
+const holdings = ref([
+  { id: 1, ticker: 'VTI', shares: 3 },
+  { id: 2, ticker: 'MSFT', shares: 10 },
+  { id: 3, ticker: 'AAPL', shares: 4 },
+])
 
 const chartRows = [
   { ticker: 'MSFT', percent: 31.4 },
@@ -21,6 +23,10 @@ const exposureRows = [
 
 function barWidth(percent) {
   return `${Math.max(percent, 2)}%`
+}
+
+function confirmField(event) {
+  event.target.blur()
 }
 </script>
 
@@ -41,13 +47,18 @@ function barWidth(percent) {
             <p class="panel-kicker">Inputs</p>
             <h2>Portfolio Builder</h2>
           </div>
-          <span class="status-pill">Draft</span>
         </div>
 
         <div class="card">
           <div class="card-heading">
             <h3>Holdings</h3>
-            <button class="ghost-button" type="button">+ Add Row</button>
+            <button
+              class="ghost-button"
+              type="button"
+              title="Add another stock or ETF holding to the portfolio."
+            >
+              + Add Row
+            </button>
           </div>
 
           <div class="holding-grid holding-grid-head">
@@ -58,20 +69,36 @@ function barWidth(percent) {
 
           <div
             v-for="holding in holdings"
-            :key="`${holding.ticker}-${holding.shares}`"
+            :key="holding.id"
             class="holding-grid"
           >
             <label class="field">
               <span class="sr-only">Ticker</span>
-              <input :value="holding.ticker" type="text" />
+              <input
+                v-model="holding.ticker"
+                type="text"
+                @keydown.enter="confirmField"
+              />
             </label>
 
             <label class="field">
               <span class="sr-only">Shares</span>
-              <input :value="holding.shares" type="number" min="1" />
+              <input
+                v-model.number="holding.shares"
+                type="number"
+                min="1"
+                @keydown.enter="confirmField"
+              />
             </label>
 
-            <button class="icon-button" type="button" aria-label="Remove row">x</button>
+            <button
+              class="icon-button"
+              type="button"
+              aria-label="Remove row"
+              title="Remove this holding from the portfolio."
+            >
+              <span aria-hidden="true">X</span>
+            </button>
           </div>
         </div>
 
@@ -88,8 +115,20 @@ function barWidth(percent) {
         </div>
 
         <div class="actions">
-          <button class="secondary-button" type="button">Prepare Cache</button>
-          <button class="primary-button" type="button">Analyze Portfolio</button>
+          <button
+            class="secondary-button"
+            type="button"
+            title="Fetch the latest ETF holdings and daily prices for this portfolio."
+          >
+            Refresh Market Data
+          </button>
+          <button
+            class="primary-button"
+            type="button"
+            title="Run the portfolio exposure analysis using cached market data."
+          >
+            Analyze Portfolio
+          </button>
         </div>
       </aside>
 
