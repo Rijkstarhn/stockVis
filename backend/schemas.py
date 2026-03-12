@@ -63,3 +63,32 @@ class PriceOption(BaseModel):
 
 class PriceOptionsResponse(BaseModel):
     items: list[PriceOption] = Field(..., description="Cached price metadata for supported tickers.")
+
+
+class CachePrepareRequest(BaseModel):
+    holdings: list[HoldingInput] = Field(
+        ...,
+        min_length=1,
+        description="List of user holdings to prepare cache data for.",
+    )
+
+
+class CachePrepareEtfResult(BaseModel):
+    ticker: str = Field(..., description="ETF ticker symbol.")
+    updated: bool = Field(..., description="Whether ETF holdings cache was refreshed.")
+    holdings_count: int = Field(..., description="Constituent count stored in cache.")
+    data_as_of_date: str = Field(..., description="Date the ETF holdings snapshot represents.")
+    last_refreshed_at: str = Field(..., description="When ETF holdings were last refreshed.")
+
+
+class CachePreparePriceResult(BaseModel):
+    ticker: str = Field(..., description="Ticker symbol for the cached price.")
+    updated: bool = Field(..., description="Whether price cache was refreshed.")
+    price: float = Field(..., description="Cached latest price.")
+    price_date: str = Field(..., description="Market date for the cached price.")
+    fetched_at: str = Field(..., description="When price was fetched.")
+
+
+class CachePrepareResponse(BaseModel):
+    etfs: list[CachePrepareEtfResult] = Field(..., description="ETF holdings refresh results.")
+    prices: list[CachePreparePriceResult] = Field(..., description="Price refresh results.")

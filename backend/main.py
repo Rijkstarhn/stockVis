@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 from db import init_db
 from routers.analyze import router as analyze_router
+from routers.cache import router as cache_router
 from routers.etf import router as etf_router
 from routers.price import router as price_router
 
@@ -15,6 +16,7 @@ def create_app() -> FastAPI:
         return {"status": "ok"}
 
     app.include_router(analyze_router)
+    app.include_router(cache_router)
     app.include_router(etf_router)
     app.include_router(price_router)
 
