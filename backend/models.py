@@ -36,3 +36,20 @@ class EtfConstituent(Base):
     stock_ticker: Mapped[str] = mapped_column(String(16), index=True, nullable=False)
     stock_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
     weight_percent: Mapped[float] = mapped_column(Float, nullable=False)
+
+
+class PriceCache(Base):
+    __tablename__ = "price_cache"
+    __table_args__ = (UniqueConstraint("ticker", name="uq_price_cache_ticker"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    ticker: Mapped[str] = mapped_column(String(16), index=True, nullable=False)
+    price: Mapped[float] = mapped_column(Float, nullable=False)
+    price_date: Mapped[date] = mapped_column(Date, nullable=False)
+    fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=utcnow,
+        onupdate=utcnow,
+        nullable=False,
+    )

@@ -74,3 +74,84 @@ def test_get_etf_holdings_raises_on_forbidden(monkeypatch) -> None:
     provider = EodhdProvider(api_key="test")
     with pytest.raises(RuntimeError, match="access denied"):
         provider.get_etf_holdings("VTI")
+
+
+def test_get_latest_price_parses_adjusted_close(monkeypatch) -> None:
+    payload = [
+        {
+            "date": "2026-03-10",
+            "close": 287.11,
+            "adjusted_close": 287.45,
+        }
+    ]
+
+    monkeypatch.setattr(
+        "providers.eodhd.httpx.Client",
+        lambda timeout: FakeClient(FakeResponse(200, "[]", payload)),
+    )
+
+    provider = EodhdProvider(api_key="test")
+    result = provider.get_latest_price("vti")
+
+    assert result.ticker == "VTI"
+    assert result.price == 287.45
+    assert result.price_date.isoformat() == "2026-03-10"
+
+
+def test_get_latest_price_raises_on_empty_payload(monkeypatch) -> None:
+    monkeypatch.setattr(
+        "providers.eodhd.httpx.Client",
+        lambda timeout: FakeClient(FakeResponse(200, "[]", [])),
+    )
+
+    provider = EodhdProvider(api_key="test")
+    with pytest.raises(RuntimeError, match="missing latest row"):
+        provider.get_latest_price("VTI")
+
+
+def test_get_latest_price_raises_on_non_200(monkeypatch) -> None:
+    monkeypatch.setattr(
+        "providers.eodhd.httpx.Client",
+        lambda timeout: FakeClient(FakeResponse(500, "err")),
+    )
+
+    provider = EodhdProvider(api_key="test")
+    with pytest.raises(RuntimeError, match="price request failed"):
+        provider.get_latest_price("VTI")
+
+
+def test_get_latest_price_raises_on_forbidden(monkeypatch) -> None:
+    monkeypatch.setattr(
+        "providers.eodhd.httpx.Client",
+        lambda timeout: FakeClient(FakeResponse(200, "Forbidden. Please contact support")),
+    )
+
+    provider = EodhdProvider(api_key="test")
+    with pytest.raises(RuntimeError, match="price access denied"):
+        provider.get_latest_price("VTI")
+
+
+def test_get_latest_price_raises_on_invalid_close(monkeypatch) -> None:
+    payload = [{"date": "2026-03-10", "close": "bad"}]
+
+    monkeypatch.setattr(
+        "providers.eodhd.httpx.Client",
+        lambda timeout: FakeClient(FakeResponse(200, "[]", payload)),
+    )
+
+    provider = EodhdProvider(api_key="test")
+    with pytest.raises(RuntimeError, match="invalid close"):
+        provider.get_latest_price("VTI")
+
+
+def test_get_latest_price_raises_on_missing_date(monkeypatch) -> None:
+    payload = [{"close": 287.11}]
+
+    monkeypatch.setattr(
+        "providers.eodhd.httpx.Client",
+        lambda timeout: FakeClient(FakeResponse(200, "[]", payload)),
+    )
+
+    provider = EodhdProvider(api_key="test")
+    with pytest.raises(RuntimeError, match="missing date"):
+        provider.get_latest_price("VTI")
