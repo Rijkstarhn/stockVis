@@ -69,3 +69,19 @@ def test_prepare_cache_endpoint_returns_409_on_value_error(monkeypatch) -> None:
 
     assert response.status_code == 409
     assert response.json() == {"detail": "Missing cached price for MSFT"}
+
+
+def test_prepare_cache_endpoint_returns_502_on_runtime_error(monkeypatch) -> None:
+    def fake_prepare(session, request):
+        raise RuntimeError("EODHD price access denied for NVDA.US with current API key")
+
+    monkeypatch.setattr(cache_router_module, "prepare_portfolio_cache", fake_prepare)
+
+    client = TestClient(app)
+    response = client.post(
+        "/cache/prepare",
+        json={"holdings": [{"ticker": "NVDA", "shares": 1}]},
+    )
+
+    assert response.status_code == 502
+    assert response.json() == {"detail": "EODHD price access denied for NVDA.US with current API key"}

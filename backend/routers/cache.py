@@ -14,3 +14,5 @@ def prepare_cache(request: CachePrepareRequest) -> CachePrepareResponse:
             return prepare_portfolio_cache(session, request)
         except ValueError as exc:
             raise HTTPException(status_code=409, detail=str(exc)) from exc
+        except RuntimeError as exc:
+            raise HTTPException(status_code=502, detail=str(exc)) from exc
