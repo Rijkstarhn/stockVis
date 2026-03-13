@@ -21,6 +21,9 @@
   --gold: #d7aa4a;
   --gold-soft: #f5d48c;
   --shadow: 0 26px 80px rgba(0, 0, 0, 0.42);
+  --holding-head-height: 44px;
+  --holding-row-height: 58px;
+  --holding-row-gap: 10px;
 }
 
 * {
@@ -67,7 +70,7 @@ button {
   margin: 0 0 10px;
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  font-size: 0.74rem;
+  font-size: 0.88rem;
   font-weight: 700;
   color: var(--accent-dark);
 }
@@ -79,9 +82,9 @@ button {
 }
 
 .hero h1 {
-  font-size: clamp(2.5rem, 5vw, 4.6rem);
-  line-height: 0.95;
-  letter-spacing: -0.05em;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
   color: #fff3d0;
   text-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
@@ -163,6 +166,40 @@ button {
   font-size: 0.88rem;
 }
 
+.feedback,
+.empty-state,
+.empty-cell {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.feedback {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(219, 173, 82, 0.12);
+  background: rgba(255, 242, 210, 0.03);
+}
+
+.feedback.success {
+  color: #edd9a3;
+}
+
+.feedback.error {
+  color: #f3b78f;
+  border-color: rgba(243, 183, 143, 0.18);
+  background: rgba(120, 42, 18, 0.16);
+}
+
+.empty-state {
+  margin: 0;
+  padding: 10px 0 4px;
+}
+
+.empty-cell {
+  padding: 18px 8px;
+}
+
 .ghost-button,
 .icon-button,
 .secondary-button,
@@ -219,12 +256,47 @@ button {
   transform: translateY(-1px);
 }
 
+.ghost-button:disabled,
+.icon-button:disabled,
+.primary-button:disabled,
+.secondary-button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+  transform: none;
+}
+
 .holding-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) 52px;
   gap: 10px;
   align-items: center;
   margin-bottom: 10px;
+}
+
+.holdings-scroll {
+  padding-right: 6px;
+}
+
+.holdings-scrollable {
+  max-height: calc(
+    var(--holding-head-height) +
+    (4 * var(--holding-row-height)) +
+    (4 * var(--holding-row-gap))
+  );
+  overflow-y: auto;
+}
+
+.holdings-scrollable::-webkit-scrollbar {
+  width: 10px;
+}
+
+.holdings-scrollable::-webkit-scrollbar-thumb {
+  background: rgba(215, 170, 74, 0.18);
+  border-radius: 999px;
+}
+
+.holdings-scrollable::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .holding-grid-head {
@@ -391,6 +463,12 @@ tbody tr:hover td {
   .holding-grid,
   .holding-grid-head {
     grid-template-columns: 1fr;
+  }
+
+  .holdings-scroll {
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
   }
 
   .holding-grid-head {
